@@ -98,6 +98,10 @@ public class Player : MonoBehaviour
             shield.gameObject.SetActive(false);
             Debug.Log("shield down!");
             gameManager.UpdatePowerupText("");
+<<<<<<< Updated upstream
+=======
+            gameManager.PlayPowerDown();
+>>>>>>> Stashed changes
             //no longer have a shield
         }
 
@@ -115,6 +119,7 @@ public class Player : MonoBehaviour
         speed = 6f;
         thruster.gameObject.SetActive(false);
         gameManager.UpdatePowerupText("");
+        gameManager.PlayPowerDown();
     }
 
     IEnumerator ShootingPowerDown()
@@ -122,6 +127,16 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(3f);
         shooting = 1;
         gameManager.UpdatePowerupText("");
+        gameManager.PlayPowerDown();
+    }
+
+    IEnumerator ShieldPowerDown()
+    {
+        yield return new WaitForSeconds(3f);
+        hasShield = false;
+        shield.gameObject.SetActive(false);
+        gameManager.UpdatePowerupText("");
+        gameManager.PlayPowerDown();
     }
 
     IEnumerator ShieldPowerDown()
