@@ -8,8 +8,6 @@ public class Player : MonoBehaviour
 
     private float horizontalInput;
     private float verticalInput;
-    private float horizontalScreenSize = 11.5f;
-    private float verticalScreenSize = 7.5f;
     private float speed;
     private int lives;
     private int shooting;
@@ -20,6 +18,7 @@ public class Player : MonoBehaviour
     public GameObject bullet;
     public GameObject explosion;
     public GameObject thruster;
+    public GameObject shield;
 
     // Start is called before the first frame update
     void Start()
@@ -36,6 +35,7 @@ public class Player : MonoBehaviour
     {
         Movement();
         Shooting();
+        gameManager.UpdateLivesText(lives);
     }
 
     void Movement()
@@ -43,13 +43,24 @@ public class Player : MonoBehaviour
         horizontalInput = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
         transform.Translate(new Vector3(horizontalInput, verticalInput,0) * Time.deltaTime * speed);
-        if (transform.position.x > horizontalScreenSize || transform.position.x <= -horizontalScreenSize)
+        if (transform.position.y > 0)
         {
-            transform.position = new Vector3(transform.position.x * -1, transform.position.y, 0);
+            transform.position = new Vector3(transform.position.x, -0.001f, 0);
         }
-        if (transform.position.y > verticalScreenSize || transform.position.y < -verticalScreenSize)
+
+        if (transform.position.y < -4)
         {
-            transform.position = new Vector3(transform.position.x, transform.position.y * -1, 0);
+            transform.position = new Vector3(transform.position.x, -3.99f, 0);
+        }
+
+        if (transform.position.x > 9.3f)
+        {
+            transform.position = new Vector3(9.299f, transform.position.y, 0);
+        }
+
+        if (transform.position.x < -9.3f)
+        {
+            transform.position = new Vector3(-9.299f, transform.position.y, 0);
         }
     }
 
@@ -83,6 +94,10 @@ public class Player : MonoBehaviour
         } else if (hasShield == true)
         {
             //lose the shield
+            hasShield = false;
+            shield.gameObject.SetActive(false);
+            Debug.Log("shield down!");
+            gameManager.UpdatePowerupText("");
             //no longer have a shield
         }
 
@@ -106,6 +121,14 @@ public class Player : MonoBehaviour
     {
         yield return new WaitForSeconds(3f);
         shooting = 1;
+        gameManager.UpdatePowerupText("");
+    }
+
+    IEnumerator ShieldPowerDown()
+    {
+        yield return new WaitForSeconds(3f);
+        hasShield = false;
+        shield.gameObject.SetActive(false);
         gameManager.UpdatePowerupText("");
     }
 
@@ -139,7 +162,9 @@ public class Player : MonoBehaviour
                 case 4:
                     //shield
                     gameManager.UpdatePowerupText("Picked up Shield!");
+                    shield.gameObject.SetActive(true);
                     hasShield = true;
+                    StartCoroutine(ShieldPowerDown());
                     break;
             }
             Destroy(whatIHit.gameObject);
