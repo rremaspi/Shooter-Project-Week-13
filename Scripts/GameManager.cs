@@ -12,6 +12,8 @@ public class GameManager : MonoBehaviour
     public GameObject enemyOne;
     public GameObject cloud;
     public GameObject powerup;
+    public GameObject butterfly;
+    public GameObject coin;
 
     public AudioClip powerUp;
     public AudioClip powerDown;
@@ -21,9 +23,11 @@ public class GameManager : MonoBehaviour
     private bool isPlayerAlive;
 
     public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI livesText;
     public TextMeshProUGUI gameOverText;
     public TextMeshProUGUI restartText;
     public TextMeshProUGUI powerupText;
+    public TextMeshProUGUI livesText;
 
     private int score;
 
@@ -32,6 +36,8 @@ public class GameManager : MonoBehaviour
     {
         Instantiate(player, transform.position, Quaternion.identity);
         InvokeRepeating("CreateEnemyOne", 1f, 3f);
+        InvokeRepeating("CreateButterfly", 3f, 6f);
+        InvokeRepeating("CreateCoin", 2f, 4f);
         StartCoroutine(CreatePowerup());
         CreateSky();
         score = 0;
@@ -43,12 +49,22 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Restart();   
+        Restart();
     }
 
     void CreateEnemyOne()
     {
         Instantiate(enemyOne, new Vector3(Random.Range(-9f, 9f), 7.5f, 0), Quaternion.Euler(0, 0, 180));
+    }
+
+    void CreateButterfly()
+    {
+        Instantiate(butterfly, new Vector3(-12, Random.Range(1f, 6.5f), 0), Quaternion.Euler(0,0,-90));
+    }
+
+    void CreateCoin()
+    {
+        Instantiate(coin, new Vector3(Random.Range(-9f, 9f), Random.Range(0f, -4f), 0), Quaternion.identity);
     }
 
     IEnumerator CreatePowerup()
@@ -83,15 +99,25 @@ public class GameManager : MonoBehaviour
 
     void Restart()
     {
-        if(Input.GetKeyDown(KeyCode.R) && isPlayerAlive == false)
+        if (Input.GetKeyDown(KeyCode.R) && isPlayerAlive == false)
         {
             SceneManager.LoadScene("Game");
         }
     }
 
+    public void UpdateLivesText(int lives)
+    {
+        livesText.text = "Lives: " + lives;
+    }
+
     public void UpdatePowerupText(string whichPowerup)
     {
         powerupText.text = whichPowerup;
+    }
+
+    public void UpdateLivesText(int lives)
+    {
+        livesText.text = "Lives: " + lives;
     }
 
     public void PlayPowerUp()
